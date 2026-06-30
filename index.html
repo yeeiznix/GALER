@@ -3,489 +3,615 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retro Pixel Photo Gallery</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <title>NFT Dashboard - Future Concept</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --win-bg: #008080;
-            --win-gray: #c0c0c0;
-            --win-dark-gray: #808080;
-            --win-blue: #000080;
+            --bg-main: #0a051b;
+            --bg-card: #130c2e;
+            --bg-sidebar: #0f0826;
+            --text-primary: #ffffff;
+            --text-muted: #847f9d;
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff007f;
+            --neon-purple: #8a2be2;
+            --glass-border: rgba(255, 255, 255, 0.08);
         }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-        }
-        body, html {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            font-family: 'VT323', monospace;
-            background-color: #000;
-        }
-        #splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, #1f1147 0%, #050212 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.8s ease, transform 0.8s ease;
-        }
-        #splash-screen.hidden {
-            opacity: 0;
-            transform: scale(1.1);
-            pointer-events: none;
-        }
-        .pixel-tv {
-            background: #3a3a3a;
-            border: 8px solid #222;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 0 0 8px #555, 0 15px 0 #111;
-            text-align: center;
-            width: 90%;
-            max-width: 480px;
-            position: relative;
-        }
-        .tv-screen {
-            background: #0a0a0a;
-            border: 4px solid #000;
-            padding: 25px 15px;
-            border-radius: 8px;
-            box-shadow: inset 0 0 30px rgba(0, 243, 255, 0.1);
-        }
-        .system-title {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 14px;
-            color: #00ffcc; margin-bottom: 25px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-shadow: 0 0 8px rgba(0, 255, 204, 0.5);
-        }
-        .boot-options {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .boot-btn {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 11px;
-            background: #222;
-            color: #fff;
-            border: 3px solid #444;
-            padding: 12px 10px;
-            cursor: pointer;
-            text-transform: uppercase;
-            text-align: left;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .boot-btn.mode-win:hover {
-            background: #000080;
-            border-color: #00ffff;
-            color: #fff;
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
-        }
-        .boot-btn.mode-cyber:hover {
-            background: #ff007f;
-            border-color: #00f3ff;
-            color: #fff;
-            box-shadow: 0 0 12px rgba(255, 0, 127, 0.6);
-        }
-        .boot-btn span.key { color: #ffcc00; }
-        .please-wait { font-size: 20px; color: #888; margin-top: 25px; letter-spacing: 2px; }
-        
-        /* ---- PERUBAHAN TATA LETAK DESKTOP ---- */
-        #desktop {
-            width: 100%;
-            height: calc(100% - 40px);
-            background-color: var(--win-bg);
-            padding: 20px;
-            display: flex;
-            flex-direction: column; /* Folder di atas, galeri di bawah */
-            gap: 20px;
-            overflow-y: auto;
-        }
-        .folder-wrapper {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 25px;
-            width: 100%;
-        }
-        .folder-icon {
-            width: 80px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            text-align: center;
-            z-index: 5;
-        }
-        .folder-sprite {
-            width: 50px;
-            height: 40px;
-            background: #f4d03f;
-            position: relative;
-            border-radius: 0 5px 5px 5px;
-            box-shadow: 2px 2px 0 #000;
-        }
-        .folder-sprite::before {
-            content: '';
-            position: absolute;
-            top: -8px;
-            left: 0;
-            width: 20px;
-            height: 8px;
-            background: #f1c40f;
-            border-radius: 3px 3px 0 0;
-        }
-        .folder-name {
-            margin-top: 8px;
-            color: #fff;
-            font-size: 18px;
-            font-weight: bold;
-            background: rgba(0,0,0,0.3);
-            padding: 2px 6px;
-            border-radius: 3px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* ---- PERUBAHAN JENDELA GALERI (ANTI-LAG) ---- */
-        .window {
-            position: relative; /* Diubah dari absolute agar menjadi bagian statis layout */
-            top: 0 !important;
-            left: 0 !important;
-            transform: none !important;
-            width: 100%;
-            max-width: 100%;
-            background: var(--win-gray);
-            border: 3px solid;
-            border-color: #fff var(--win-dark-gray) var(--win-dark-gray) #fff;
-            box-shadow: none;
-            display: none;
-            flex-direction: column;
-            z-index: 10;
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
         }
-        .window-header {
-            background: var(--win-blue);
-            color: white;
-            padding: 6px 10px;
+
+        /* --- SIDEBAR NAVIGASI --- */
+        aside {
+            width: 75px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px 0;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 24px;
+            color: var(--neon-cyan);
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+            margin-bottom: 40px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            flex-grow: 1;
+            align-items: center;
+        }
+
+        .nav-item {
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+        }
+
+        .nav-item.active, .nav-item:hover {
+            color: var(--neon-cyan);
+            background: rgba(0, 243, 255, 0.1);
+        }
+
+        .logout-btn {
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* --- KONTEN UTAMA (SCROLLABLE) --- */
+        main {
+            flex-grow: 1;
+            display: flex;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .dashboard-center {
+            flex: 3;
+            padding: 25px;
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        /* --- HEADER / TOPBAR --- */
+        .topbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-weight: bold;
-            font-size: 18px;
+            margin-bottom: 30px;
+            gap: 20px;
         }
-        .close-btn {
-            background: var(--win-gray);
-            border: 2px solid;
-            border-color: #fff var(--win-dark-gray) var(--win-dark-gray) #fff;
-            width: 22px;
-            height: 22px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
+
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 450px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-box input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 12px 15px 12px 45px;
+            border-radius: 12px;
+            color: white;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .topbar-actions {
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 15px;
         }
-        .window-menu { display: flex; gap: 15px; padding: 4px 10px; border-bottom: 2px solid var(--win-dark-gray); font-size: 16px; }
-        
-        .window-body {
-            padding: 15px;
-            background: #fff;
-            margin: 4px;
-            border: 2px solid inset;
-            border-color: var(--win-dark-gray) #fff #fff var(--win-dark-gray);
-            max-height: calc(100vh - 230px); /* Batasi tinggi dinamis agar tidak merusak desktop */
-            overflow-y: auto;
+
+        .eth-badge {
+            background: rgba(138, 43, 226, 0.15);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .photo-grid {
+
+        .btn-neon {
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
+        }
+
+        /* --- SECTION LIVE AUCTION --- */
+        section {
+            margin-bottom: 35px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .section-header a {
+            color: var(--neon-cyan);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .auction-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .auction-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.3) 100%);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            height: 220px;
+            position: relative;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Float Glass Overlay Info */
+        .auction-overlay {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            right: 15px;
+            background: rgba(15, 8, 38, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .time-box div, .bid-box div {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .time-box span, .bid-box span {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .btn-bid {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* --- SECTION TOP SELLERS --- */
+        .sellers-list {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .seller-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            padding: 10px 15px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 140px;
+        }
+
+        .seller-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--neon-pink);
+        }
+
+        .seller-info p {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .seller-info span {
+            font-size: 11px;
+            color: var(--neon-cyan);
+        }
+
+        /* --- SECTION HOT BIDS --- */
+        .bids-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 15px;
+        }
+
+        .bid-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 10px;
+        }
+
+        .bid-thumbnail {
+            width: 100%;
+            height: 120px;
+            border-radius: 12px;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .bid-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .bid-price {
+            font-size: 12px;
+            color: var(--neon-cyan);
+            font-weight: 600;
+        }
+
+        /* --- RIGHT SIDEBAR (PROFILE PANEL) --- */
+        .right-panel {
+            flex: 1.2;
+            max-width: 360px;
+            background-color: var(--bg-sidebar);
+            border-left: 1px solid var(--glass-border);
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .profile-header {
+            text-align: center;
+            position: relative;
+            background: linear-gradient(180deg, rgba(255,0,127,0.1) 0%, transparent 100%);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--neon-cyan);
+            margin-bottom: 15px;
+        }
+
+        .profile-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .profile-email {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            padding: 12px;
+            border-radius: 14px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .stat-item h4 {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .stat-item span {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .balance-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .revenue-chart {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 15px;
+        }
+
+        /* Simulasi Grafik Balok */
+        .chart-bars {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            height: 80px;
+            margin-top: 15px;
+        }
+
+        .bar {
+            width: 12px;
+            background: linear-gradient(to top, var(--neon-purple), var(--neon-cyan));
+            border-radius: 4px;
+        }
+
+        .recent-activity {
+            display: flex;
+            flex-direction: column;
             gap: 12px;
         }
-        .photo-item {
-            border: 2px solid var(--win-gray);
-            background: #000;
-            height: 100px;
-            overflow: hidden;
-            position: relative;
-            cursor: pointer;
-            will-change: transform;
-        }
-        .photo-item:hover {
-            outline: 2px dashed var(--win-blue);
-        }
-        .photo-item img { width: 100%; height: 100%; object-fit: cover; }
-        
-        /* Lightbox (Tetap dipertahankan untuk memperbesar gambar jika diklik) */
-        .lightbox-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.75);
+
+        .activity-item {
             display: flex;
-            justify-content: center;
             align-items: center;
-            z-index: 2000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 10px;
+            border-radius: 12px;
         }
-        .lightbox-overlay.active { opacity: 1; pointer-events: auto; }
-        .lightbox-window {
-            background: var(--win-gray);
-            border: 3px solid;
-            border-color: #fff var(--win-dark-gray) var(--win-dark-gray) #fff;
-            padding: 4px;
-            max-width: 90%;
-            max-height: 80%;
-            box-shadow: 0px 0px 20px rgba(0,0,0,0.8);
-            transform: scale(0.7);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            flex-direction: column;
+
+        .activity-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
         }
-        .lightbox-overlay.active .lightbox-window { transform: scale(1); }
-        .lightbox-content {
-            border: 2px solid inset;
-            border-color: var(--win-dark-gray) #fff #fff var(--win-dark-gray);
-            background: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .lightbox-window img { max-width: 100%; max-height: 65vh; object-fit: contain; display: block; }
-        
-        /* Start Menu & Taskbar */
-        .start-menu {
-            position: fixed;
-            bottom: 40px;
-            left: 2px;
-            width: 200px;
-            background: var(--win-gray);
-            border: 3px solid;
-            border-color: #fff var(--win-dark-gray) var(--win-dark-gray) #fff;
-            box-shadow: 3px 3px 12px rgba(0,0,0,0.6);
-            display: none;
-            flex-direction: column;
-            z-index: 999;
-        }
-        .start-menu.active { display: flex; }
-        .start-menu-sidebar {
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 25px;
-            background: linear-gradient(to top, var(--win-blue), #0000ff);
-            color: #fff;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 11px;
-            padding-bottom: 10px;
-            writing-mode: vertical-rl;
-            transform: rotate(180deg);
-        }
-        .start-menu-list { margin-left: 25px; display: flex; flex-direction: column; }
-        .start-menu-item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; color: #000; font-size: 18px; cursor: pointer; text-decoration: none; }
-        .start-menu-item:hover { background: var(--win-blue); color: #fff; }
-        .start-menu-item i { font-size: 16px; width: 20px; text-align: center; }
-        .start-menu-divider { height: 2px; background: var(--win-dark-gray); border-bottom: 1px solid #fff; margin: 3px 0 3px 25px; }
-        .taskbar { position: fixed; bottom: 0; left: 0; width: 100%; height: 40px; background: var(--win-gray); border-top: 3px solid #fff; display: flex; align-items: center; padding: 0 5px; justify-content: space-between; z-index: 1000; }
-        .start-menu-btn { background: var(--win-gray); border: 2px solid; border-color: #fff var(--win-dark-gray) var(--win-dark-gray) #fff; padding: 2px 10px; font-weight: bold; font-size: 16px; display: flex; align-items: center; gap: 6px; cursor: pointer; }
-        .start-menu-btn:active, .start-menu-btn.active { border-color: var(--win-dark-gray) #fff #fff var(--win-dark-gray); padding: 3px 9px 1px 11px; }
-        .clock { border: 2px solid; border-color: var(--win-dark-gray) #fff #fff var(--win-dark-gray); padding: 2px 10px; font-size: 16px; background: var(--win-gray); }
     </style>
 </head>
 <body>
 
-    <div id="splash-screen">
-        <div class="pixel-tv">
-            <div class="tv-screen">
-                <div class="system-title">Select Boot Mode:</div>
-                <div class="boot-options">
-                    <button class="boot-btn mode-win" onclick="bootSystem('windows')">
-                        <span class="key">[1]</span> Windows 95 Mode
-                    </button>
-                    <button class="boot-btn mode-cyber" onclick="bootSystem('cyberpunk')">
-                        <span class="key">[2]</span> Cyberpunk Mode
-                    </button>
+    <aside>
+        <div class="logo">f</div>
+        <div class="nav-menu">
+            <div class="nav-item active"><i class="fa-solid fa-chart-pie"></i></div>
+            <div class="nav-item"><i class="fa-solid fa-compass"></i></div>
+            <div class="nav-item"><i class="fa-solid fa-wallet"></i></div>
+            <div class="nav-item"><i class="fa-solid fa-clock-history"></i></div>
+            <div class="nav-item"><i class="fa-solid fa-gear"></i></div>
+        </div>
+        <div class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></div>
+    </aside>
+
+    <main>
+        <div class="dashboard-center">
+            <div class="topbar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search by creator or collection...">
+                </div>
+                <div class="topbar-actions">
+                    <div class="eth-badge">
+                        <i class="fa-brands fa-ethereum"></i> 3.25 ETH
+                    </div>
+                    <button class="btn-neon">Create</button>
+                    <button class="btn-outline">Connect Wallet</button>
+                </div>
+            </div>
+
+            <section>
+                <div class="section-header">
+                    <h2>Popular NFT's Live Auction</h2>
+                    <a href="#">Show More <i class="fa-solid fa-chevron-right"></i></a>
+                </div>
+                <div class="auction-grid">
+                    <div class="auction-card" style="background-image: url('https://picsum.photos/500/300?random=11');">
+                        <div class="auction-overlay">
+                            <div class="time-box">
+                                <div>Time Remaining</div>
+                                <span>18h : 17m : 29s</span>
+                            </div>
+                            <div class="bid-box">
+                                <div>Highest Bid</div>
+                                <span>17.53 ETH</span>
+                            </div>
+                            <button class="btn-bid">Place A Bid</button>
+                        </div>
+                    </div>
+                    <div class="auction-card" style="background-image: url('https://picsum.photos/500/300?random=12');">
+                        <div class="auction-overlay">
+                            <div class="time-box">
+                                <div>Time Remaining</div>
+                                <span>18h : 17m : 29s</span>
+                            </div>
+                            <div class="bid-box">
+                                <div>Highest Bid</div>
+                                <span>17.53 ETH</span>
+                            </div>
+                            <button class="btn-bid">Place A Bid</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-star" style="color: yellow;"></i> Top Sellers</h2>
+                </div>
+                <div class="sellers-list">
+                    <div class="seller-card">
+                        <img class="seller-avatar" src="https://picsum.photos/100/100?random=1" alt="">
+                        <div class="seller-info"><p>@dicar</p><span>$232,102</span></div>
+                    </div>
+                    <div class="seller-card">
+                        <img class="seller-avatar" src="https://picsum.photos/100/100?random=2" alt="">
+                        <div class="seller-info"><p>@astroo2</p><span>$172,025</span></div>
+                    </div>
+                    <div class="seller-card">
+                        <img class="seller-avatar" src="https://picsum.photos/100/100?random=3" alt="">
+                        <div class="seller-info"><p>@micle</p><span>$92,002</span></div>
+                    </div>
+                    <div class="seller-card">
+                        <img class="seller-avatar" src="https://picsum.photos/100/100?random=4" alt="">
+                        <div class="seller-info"><p>@glitch</p><span>$88,024</span></div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-fire" style="color: orange;"></i> Hot Bids</h2>
+                </div>
+                <div class="bids-grid">
+                    <div class="bid-card">
+                        <img class="bid-thumbnail" src="https://picsum.photos/200/200?random=21">
+                        <div class="bid-title">Stretch Of Time</div>
+                        <div class="bid-price">0.045 ETH</div>
+                    </div>
+                    <div class="bid-card">
+                        <img class="bid-thumbnail" src="https://picsum.photos/200/200?random=22">
+                        <div class="bid-title">Arcade Land</div>
+                        <div class="bid-price">0.045 ETH</div>
+                    </div>
+                    <div class="bid-card">
+                        <img class="bid-thumbnail" src="https://picsum.photos/200/200?random=23">
+                        <div class="bid-title">Shinsekai Portal</div>
+                        <div class="bid-price">0.045 ETH</div>
+                    </div>
+                    <div class="bid-card">
+                        <img class="bid-thumbnail" src="https://picsum.photos/200/200?random=24">
+                        <div class="bid-title">Paper Cut</div>
+                        <div class="bid-price">0.045 ETH</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="right-panel">
+            <div class="profile-header">
+                <img class="profile-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Musfiqur" alt="Avatar">
+                <div class="profile-name">Musfiqur Rahman</div>
+                <div class="profile-email">nftexpert@gmail.com</div>
+
+                <div class="stats-row">
+                    <div class="stat-item"><h4>120</h4><span>Asset</span></div>
+                    <div class="stat-item"><h4>10K</h4><span>Followers</span></div>
+                    <div class="stat-item"><h4>70K</h4><span>Likes</span></div>
+                    <div class="stat-item"><h4>60</h4><span>Bidding</span></div>
+                </div>
+            </div>
+
+            <div>
+                <h3 style="font-size: 16px; margin-bottom: 12px;">Your Balance</h3>
+                <div class="balance-card">
+                    <span style="font-weight: 700; font-size: 18px;"><i class="fa-brands fa-ethereum"></i> 4.668 ETH</span>
+                    <button class="btn-bid" style="background: var(--neon-cyan); color: black; border: none;">Add +</button>
+                </div>
+            </div>
+
+            <div class="revenue-chart">
+                <h3 style="font-size: 16px;">Revenue</h3>
+                <div class="chart-bars">
+                    <div class="bar" style="height: 40px;"></div>
+                    <div class="bar" style="height: 65px;"></div>
+                    <div class="bar" style="height: 30px;"></div>
+                    <div class="bar" style="height: 80px;"></div>
+                    <div class="bar" style="height: 50px;"></div>
+                    <div class="bar" style="height: 70px;"></div>
+                </div>
+            </div>
+
+            <div class="recent-activity">
+                <h3 style="font-size: 16px;">Recent Activity</h3>
+                <div class="activity-item">
+                    <img class="activity-img" src="https://picsum.photos/80/80?random=31">
+                    <div style="flex-grow: 1;"><p style="font-size:13px; font-weight:600;">Crystal_Art</p><span style="font-size:11px; color:var(--text-muted);">by @rudepixel</span></div>
+                    <span style="font-size:12px; font-weight:600; color:var(--neon-cyan);">6.25 ETH</span>
+                </div>
+                <div class="activity-item">
+                    <img class="activity-img" src="https://picsum.photos/80/80?random=32">
+                    <div style="flex-grow: 1;"><p style="font-size:13px; font-weight:600;">Creative Art</p><span style="font-size:11px; color:var(--text-muted);">by @songkong</span></div>
+                    <span style="font-size:12px; font-weight:600; color:var(--neon-cyan);">7.50 ETH</span>
                 </div>
             </div>
         </div>
-        <div class="please-wait">Awaiting connection input...</div>
-    </div>
+    </main>
 
-    <div id="desktop" onclick="closeStartMenu()">
-        <div class="folder-wrapper">
-            <div class="folder-icon" onclick="event.stopPropagation(); openFolder('camera')">
-                <div class="folder-sprite"></div>
-                <div class="folder-name">Camera</div>
-            </div>
-            <div class="folder-icon" onclick="event.stopPropagation(); openFolder('205MSDCF')">
-                <div class="folder-sprite"></div>
-                <div class="folder-name">205MSDCF</div>
-            </div>
-            <div class="folder-icon" onclick="event.stopPropagation(); openFolder('207MSDCF')">
-                <div class="folder-sprite"></div>
-                <div class="folder-name">207MSDCF</div>
-            </div>
-        </div>
-
-        <div class="window" id="galleryWindow">
-            <div class="window-header">
-                <span id="windowTitle">folder.exe</span>
-                <button class="close-btn" onclick="closeFolder()">X</button>
-            </div>
-            <div class="window-menu">
-                <span>File</span> <span>Edit</span> <span>View</span> <span>Options</span>
-            </div>
-            <div class="window-body">
-                <div class="photo-grid" id="photoGridContent"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="start-menu" id="startMenu">
-        <div class="start-menu-sidebar" id="sidebarTitle">WIN95</div>
-        <div class="start-menu-list">
-            <div class="start-menu-item" onclick="openFolder('camera')">
-                <i class="fa-solid fa-images" style="color: #ff5722;"></i>
-                <span>My Photos</span>
-            </div>
-            <div class="start-menu-divider"></div>
-            <div class="start-menu-item" onclick="location.reload();">
-                <i class="fa-solid fa-power-off" style="color: #e91e63;"></i>
-                <span>Restart Gateway</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
-        <div class="lightbox-window" onclick="event.stopPropagation()">
-            <div class="window-header">
-                <span>image_viewer.exe</span>
-                <button class="close-btn" onclick="closeLightbox()">X</button>
-            </div>
-            <div class="lightbox-content">
-                <img id="lightboxImg" src="" alt="Zoomed View">
-            </div>
-        </div>
-    </div>
-
-    <div class="taskbar">
-        <button class="start-menu-btn" id="startBtn" onclick="toggleStartMenu(event)">
-            <i class="fa-solid fa-folder-open" style="color: #616161;"></i>
-            <span>Start</span>
-        </button>
-        <div class="clock" id="liveClock">12:00 PM</div>
-    </div>
-
-    <script>
-        // Simulasi Data Foto Berdasarkan Folder Yang Dipilih
-        const mockData = {
-            'camera': [
-                'https://picsum.photos/300/300?random=1',
-                'https://picsum.photos/300/300?random=2',
-                'https://picsum.photos/300/300?random=3'
-            ],
-            '205MSDCF': [
-                'https://picsum.photos/300/300?random=4',
-                'https://picsum.photos/300/300?random=5'
-            ],
-            '207MSDCF': [
-                'https://picsum.photos/300/300?random=6',
-                'https://picsum.photos/300/300?random=7',
-                'https://picsum.photos/300/300?random=8',
-                'https://picsum.photos/300/300?random=9'
-            ]
-        };
-
-        // 1. Logika Booting / Splash Screen
-        function bootSystem(mode) {
-            const splash = document.getElementById('splash-screen');
-            splash.classList.add('hidden');
-            
-            if(mode === 'cyberpunk') {
-                document.documentElement.style.setProperty('--win-bg', '#120136');
-                document.documentElement.style.setProperty('--win-gray', '#035aa6');
-                document.documentElement.style.setProperty('--win-blue', '#fc8621');
-                document.getElementById('sidebarTitle').innerText = 'CYBER';
-            }
-        }
-
-        // 2. Buka Folder Instan Tanpa Lag Melayang
-        function openFolder(folderName) {
-            closeStartMenu();
-            const galleryWindow = document.getElementById('galleryWindow');
-            const windowTitle = document.getElementById('windowTitle');
-            const photoGridContent = document.getElementById('photoGridContent');
-            
-            windowTitle.innerText = `${folderName.toUpperCase()}.EXE`;
-            photoGridContent.innerHTML = ''; // Reset kontainer gambar kuno
-
-            if(mockData[folderName]) {
-                mockData[folderName].forEach(imgUrl => {
-                    const item = document.createElement('div');
-                    item.className = 'photo-item';
-                    item.innerHTML = `<img src="${imgUrl}" alt="Photo Content" onclick="openLightbox('${imgUrl}')">`;
-                    photoGridContent.appendChild(item);
-                });
-            }
-            
-            // Langsung dirender secara inline di halaman bawah folder
-            galleryWindow.style.display = 'flex';
-        }
-
-        function closeFolder() {
-            document.getElementById('galleryWindow').style.display = 'none';
-        }
-
-        // 3. Sistem Pembuka Gambar Zoom (Lightbox)
-        function openLightbox(imgUrl) {
-            const lightbox = document.getElementById('lightbox');
-            document.getElementById('lightboxImg').src = imgUrl;
-            lightbox.classList.add('active');
-        }
-
-        function closeLightbox() {
-            document.getElementById('lightbox').classList.remove('active');
-        }
-
-        // 4. Pengatur Start Menu Windows 95
-        function toggleStartMenu(event) {
-            event.stopPropagation();
-            const startMenu = document.getElementById('startMenu');
-            const startBtn = document.getElementById('startBtn');
-            startMenu.classList.toggle('active');
-            startBtn.classList.toggle('active');
-        }
-
-        function closeStartMenu() {
-            document.getElementById('startMenu').classList.remove('active');
-            document.getElementById('startBtn').classList.remove('active');
-        }
-
-        // 5. Fitur Jam Hidup (Live Clock)
-        setInterval(() => {
-            const time = new Date();
-            document.getElementById('liveClock').textContent = time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        }, 1000);
-    </script>
 </body>
 </html>
