@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Glass UI - Clean Grid Photo</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+
+    <style>
+        /* ===================================
+           GLOBAL & LAYOUT
+        =================================== */
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html{
+            scroll-behavior: smooth;
+        }
+
+        body{
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            background: #11192e;
+            color: #fff;
+        }
+
+        .background{
+            position: fixed;
+            inset: 0;
+            background: #6da8ff;
+            background-image: url("assets/bg.jpg"); 
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            filter: blur(18px);
+            transform: scale(1.1);
+            z-index: -2;
+        }
+
+        .background::after{
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(20, 40, 90, .45);
+        }
+
+        .container{
+            width: 100%;
+            min-height: 100vh;
+            padding: 25px;
+        }
+
+        /* ===================================
+           GLASS EFFECT & PANELS
+        =================================== */
+        .glass{
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            background: rgba(255, 255, 255, .10);
+            border: 1px solid rgba(255, 255, 255, .18);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, .25), 0 10px 40px rgba(0, 0, 0, .18);
+        }
+
+        header, .grid-box {
+            transition: transform 0.35s, background 0.35s, box-shadow 0.35s;
+        }
+
+        /* ==========================
+           CONTENT & NAVBAR
+        ========================== */
+        .content{
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            position: relative;
+        }
+
+        header{
+            height: 75px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            border-radius: 28px;
+            position: relative;
+            z-index: 100;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .home-btn {
+            color: #fff;
+            text-decoration: none;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .home-btn:hover {
+            transform: scale(1.05);
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .profile-trigger{
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .profile-trigger:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.05);
+        }
+
+        .profile-trigger img{
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #aaa;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+        }
+
+        /* =======================================================
+           POPUP PROFIL (GRADASI BIRU-UNGU TRANSPARAN)
+        ======================================================= */
+        .popup-card {
+            position: absolute;
+            top: 85px; 
+            right: 0;
+            width: 320px;
+            border-radius: 24px;
+            padding: 25px 20px;
+            text-align: center;
+            z-index: 9999 !important; 
+            
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
+            
+            background: linear-gradient(135deg, rgba(20, 30, 85, 0.65), rgba(45, 15, 65, 0.65)); 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+
+            opacity: 0;
+            transform: translateY(-10px) scale(0.95);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+
+        .popup-card.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .avatar-container {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px auto;
+        }
+
+        .avatar-container .robot-icon {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 5px;
+        }
+
+        .popup-card h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #fff;
+        }
+
+        .popup-card p {
+            color: #ddd;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .social-bar {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .social-bar a {
+            font-size: 22px;
+            transition: 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .social-bar a.fb { color: #1877f2 !important; }
+        .social-bar a.ig { color: #e1306c !important; }
+        .social-bar a.yt { color: #ff0000 !important; }
+        .social-bar a.tt { color: #00f2fe !important; }
+
+        /* =========================================
+           KOTAK-KOTAK GRID FOTO + TOMBOL UNDUH
+        ========================================= */
+        .main-grid{
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-top: 10px;
+            z-index: 1;
+        }
+
+        .grid-box{
+            overflow: hidden;
+            border-radius: 24px;
+            cursor: pointer;
+            position: relative;
+            aspect-ratio: 4 / 3;
+        }
+
+        .grid-box img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: .4s;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .card-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px 18px;
+            display: flex;
+            justify-content: flex-end; 
+            align-items: center;
+            z-index: 2;
+        }
+
+        .card-dl-btn {
+            width: 52px; 
+            height: 34px;
+            border-radius: 10px; 
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #fff;
+            font-size: 15px;
+            transition: 0.3s ease;
+            
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background: linear-gradient(135deg, rgba(20, 30, 85, 0.75), rgba(45, 15, 65, 0.75));
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-dl-btn:hover {
+            transform: scale(1.08);
+            border-color: rgba(255, 255, 255, 0.5);
+            filter: brightness(120%);
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+        }
+
+        .grid-box::before{
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(transparent 50%, rgba(0,0,0,0.6));
+            z-index: 1;
+        }
+
+        .grid-box:hover img{ transform: scale(1.06); }
+        .grid-box:hover{
+            box-shadow: 0 0 25px rgba(255,255,255,.15), 0 15px 35px rgba(0,0,0,.3);
+        }
+
+        /* Loading & Error Message Styling */
+        .status-msg {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #ddd;
+        }
+
+        /* =========================================
+           RESPONSIVE (MOBILE OPTIMIZED)
+        ========================================= */
+        @media(max-width:1200px){
+            .main-grid{ grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media(max-width:768px){
+            .container{ padding: 15px; }
+            header{ padding: 15px 20px; }
+            
+            .popup-card { 
+                top: 80px; 
+                right: 0;
+                width: 230px; 
+                padding: 18px 14px;
+                border-radius: 18px;
+                background: linear-gradient(135deg, rgba(20, 30, 85, 0.75), rgba(45, 15, 65, 0.75));
+            }
+            .avatar-container { width: 55px; height: 55px; margin-bottom: 8px; }
+            .popup-card h2 { font-size: 15px; }
+            .popup-card p { font-size: 11px; margin-bottom: 12px; }
+            .social-bar { padding: 6px; border-radius: 10px; }
+            .social-bar a { font-size: 18px; }
+
+            .main-grid{ grid-template-columns: 1fr; }
+            
+            .card-info { padding: 12px 14px; }
+            .card-dl-btn { width: 48px; height: 32px; font-size: 14px; border-radius: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background"></div>
+
+    <div class="container">
+        <div class="content">
+            
+            <header class="glass">
+                <div class="nav-left">
+                    <a class="home-btn"><i class="fa-solid fa-house"></i> Home</a>
+                </div>
+                <div class="profile-trigger" id="openProfile">
+                    <img src="assets/avatar.png" alt="Avatar">
+                </div>
+
+                <div class="popup-card" id="profileModal">
+                    <div class="avatar-container">
+                        <img src="assets/avatar.png" class="robot-icon" alt="Robot Profile">
+                    </div>
+                    <h2>Musfiqur Rahman</h2>
+                    <p>nftexpert@gmail.com</p>
+                    <div class="social-bar">
+                        <a href="#" class="fb"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" class="ig"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="yt"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="#" class="tt"><i class="fa-brands fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </header>
+
+            <div class="main-grid" id="photoGrid">
+                <div class="status-msg"><i class="fa-solid fa-spinner fa-spin"></i> Memuat galeri dari GitHub...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            /* ========================================================
+               AMBIL DAFTAR FOTO DARI REPO GITHUB SECARA OTOMATIS
+            ======================================================== */
+            const photoGrid = document.getElementById("photoGrid");
+            
+            // Endpoint API GitHub untuk folder 207MSDCF
+            const repoApiUrl = "https://api.github.com/repos/yeeiznix/GALER/contents/207MSDCF";
+
+            fetch(repoApiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Gagal mengambil data dari repositori GitHub.");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Bersihkan pesan loading
+                    photoGrid.innerHTML = "";
+
+                    // Ekstensi file gambar yang diizinkan
+                    const validExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'bmp'];
+
+                    // Filter hanya file gambar
+                    const imageFiles = data.filter(file => {
+                        const ext = file.name.split('.').pop().toLowerCase();
+                        return file.type === "file" && validExtensions.includes(ext);
+                    });
+
+                    if (imageFiles.length === 0) {
+                        photoGrid.innerHTML = `<div class="status-msg">Tidak ada foto yang ditemukan di dalam folder 207MSDCF.</div>`;
+                        return;
+                    }
+
+                    // Render setiap foto ke dalam Grid
+                    imageFiles.forEach(file => {
+                        // download_url berisi tautan mentah (raw link) langsung dari GitHub untuk ditampilkan
+                        const imageUrl = file.download_url;
+                        const fileName = file.name.split('.').slice(0, -1).join('.'); // Nama file tanpa eksitensi
+
+                        const gridBox = document.createElement("div");
+                        gridBox.className = "grid-box glass";
+                        gridBox.setAttribute("data-filename", fileName);
+
+                        gridBox.innerHTML = `
+                            <img src="${imageUrl}" alt="${fileName}">
+                            <div class="card-info">
+                                <div class="card-dl-btn" title="Download Foto"><i class="fa-solid fa-download"></i></div>
+                            </div>
+                        `;
+
+                        photoGrid.appendChild(gridBox);
+
+                        // Daftarkan efek Tilt 3D pada elemen baru
+                        applyTiltEffect(gridBox);
+                    });
+
+                    // Daftarkan aksi download untuk elemen yang baru dibuat
+                    initDownloadButtons();
+                })
+                .catch(error => {
+                    console.error(error);
+                    photoGrid.innerHTML = `<div class="status-msg" style="color: #ff6b6b;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat galeri. Pastikan folder dan repositori sudah publik.</div>`;
+                });
+
+
+            /* ===========================
+               TOGGLE POPUP CONTROLLER
+            =========================== */
+            const trigger = document.getElementById("openProfile");
+            const modal = document.getElementById("profileModal");
+
+            trigger.addEventListener("click", (e) => {
+                e.stopPropagation(); 
+                modal.classList.toggle("active");
+            });
+
+            document.addEventListener("click", (e) => {
+                if (!modal.contains(e.target) && e.target !== trigger) {
+                    modal.classList.remove("active");
+                }
+            });
+
+            /* ========================================================
+               AKSI SEKALI KLIK LANGSUNG DOWNLOAD FOTO ASLI KOTAK
+            ======================================================== */
+            function initDownloadButtons() {
+                const dlButtons = document.querySelectorAll(".card-dl-btn");
+                dlButtons.forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        e.stopPropagation(); 
+                        
+                        const card = btn.closest(".grid-box");
+                        const img = card.querySelector("img");
+                        const fileNameAttr = card.getAttribute("data-filename") || "photo";
+                        
+                        if(img && img.src) {
+                            const link = document.createElement("a");
+                            link.href = img.src;
+                            link.download = `${fileNameAttr}.jpg`;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        }
+                    });
+                });
+            }
+
+            /* ===========================
+               KOTAK HOVER 3D TILT EFFECT
+            =========================== */
+            function applyTiltEffect(box) {
+                box.addEventListener("mousemove", (e) => {
+                    const rect = box.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const rotateY = (x - rect.width / 2) / 15;
+                    const rotateX = (rect.height / 2 - y) / 15;
+                    box.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+                });
+
+                box.style.transition = "transform 0.1s ease, box-shadow 0.3s ease";
+
+                box.addEventListener("mouseleave", () => {
+                    box.style.transition = "transform 0.5s ease, box-shadow 0.3s ease";
+                    box.style.transform = "";
+                });
+            }
+        });
+    </script>
+</body>
+</html>
